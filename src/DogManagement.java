@@ -8,17 +8,35 @@
     Author: G. Bolles
  */
 import java.util.*;
+import java.io.*;
 class Dog {
     int id;
     String name;
-    double weight;
+    int weight;
     int age;
 
-    public Dog(int id, String name, double weight, int age) {
+    public Dog() {
+        this.id = 0;
+        this.name = "Not provided";
+        this.weight = 0;
+        this.age = 0;
+    }
+    public Dog(int id, String name, int weight, int age) {
         this.id = id;
         this.name = name;
         this.weight = weight;
         this.age = age;
+    }
+    
+    public void setWeight(int weight){
+        this.weight = weight;
+    }
+    
+    public void setAge(int age){
+        this.age = age;
+    }
+    public void setName(String name){
+        this.name = name;
     }
     public int getID(){
         return id;
@@ -49,8 +67,55 @@ public class DogManagement {
     static final int SENTINEL_VALUE=-1;
     static final Scanner SCN = new Scanner(System.in);
     public static void main(String[] args) throws Exception {
-        
-        
+        importPriorData();
+        System.out.println("Welcome, this program allows for a care attendant to be able to create, retrieve and update a dog record from the system.");
+        boolean exit = false;
+        int userChoice=0;
+        while(exit==false){
+            userChoice = displayPrompt();
+            if(userChoice==1){
+                CreateRecord();
+            }
+            else if(userChoice==2){
+                DisplayCurrentRecordIDs();
+                DisplayRecord();
+            }
+            else if(userChoice==3){
+                DisplayCurrentRecordIDs();
+                UpdateRecord();
+            }
+            else if(userChoice==4||userChoice==SENTINEL_VALUE){
+                exit = true;
+            }
+            else{
+                System.out.println("Invalid menu option; please try again.");
+            }
+        }
+    }
+    public static void DisplayCurrentRecordIDs(){
+        System.out.println("Current Record IDs:");
+        for(int i=0;i<dogs.size();i++){
+            Dog dog = dogs.get(i);
+            System.out.println(dog.getID() + " - " + dog.getName());
+        }
+    }
+    public static void importPriorData(){
+        File file = new File("doginfo.csv");
+        try {
+            Scanner fileScanner = new Scanner(file);
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                String[] values = line.split(","); //this is what I found for splitting Strings by delim in java
+                int id = Integer.parseInt(values[0]);
+                String name = values[1];
+                int weight = Integer.parseInt(values[2]);
+                int age = Integer.parseInt(values[3]);
+                dogs.add(new Dog(id, name, weight, age));
+            }
+            fileScanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+        }
     }
     public static int displayPrompt(){
         int menuOption;
@@ -59,18 +124,17 @@ public class DogManagement {
         System.out.println("\t1) Create a dog record");
         System.out.println("\t2) Display dog record");
         System.out.println("\t3) Update dog record");
-        System.out.println("\t4) Display dog years");
-        System.out.println("\t5) Exit Program");
+        System.out.println("\t4) Exit Program");
         
         System.out.print("Enter selection here --> ");
-        //INPUT
+        
         menuOption = Integer.parseInt(SCN.nextLine());
 
         return menuOption;
     }
     public static void DisplayRecord(){
         int idToDisplay=ValidateAlternateIDInput("Enter the ID of the record to display: ");
-        if(idToDisplay==SENTINEL_VALUE){
+        if(idToDisplay==SENTINEL_VALUE) {
             System.out.println("Display cancelled.");
             return;
         }
@@ -84,8 +148,9 @@ public class DogManagement {
             }
         }
     }
+
     public static void UpdateRecord(){
-        /*int idToUpdate=ValidateAlternateIDInput("Enter the ID of the record to update: ");
+        int idToUpdate=ValidateAlternateIDInput("Enter the ID of the record to update: ");
         if(idToUpdate==SENTINEL_VALUE){
             System.out.println("Update cancelled.");
             return;
@@ -96,11 +161,9 @@ public class DogManagement {
                 System.out.println("Record not found."); //Shouldn't hit this
             }
             else{
+                System.out.println("");
                 System.out.println("Current record:");
-                System.out.println("ID: " + ids[index]);
-                System.out.println("Name: " + names[index]);
-                System.out.println("Weight: " + weights[index]);
-                System.out.println("Age: " + ages[index]);
+                System.out.println(dogs.get(index).toString());
                 System.out.println("Enter new values for the record:");
                 
                 String newName = ValidateStringInput("Enter the dog's new name: ");
@@ -119,68 +182,52 @@ public class DogManagement {
                     System.out.println("Record update cancelled.");
                     return;
                 }
-                
-                names[index] = newName;
-                weights[index] = newWeight;
-                ages[index] = newAge;
+                dogs.get(index).setName(newName);
+                dogs.get(index).setWeight(newWeight);
+                dogs.get(index).setAge(newAge);
                 System.out.println("Record updated successfully.");
             }
-        }*/
+        }
     }
 
     public static void CreateRecord() {
-       /*
+       
         int collectID = ValidateIDInput("Please enter the dog's desired ID: ");
         if(collectID==SENTINEL_VALUE){
             System.out.println("Record creation cancelled.");
-              return;
+            return;
         }
+        
         String collectName = ValidateStringInput("Please enter the dog's name: ");
         if(collectName.equals(SENTINEL_VALUE)==true){
-        System.out.println("Record creation cancelled.");
-        return;
-        }
-        String collectBreed = ValidateStringInput("Please enter the dog's breed: ");
-        if(collectBreed.equals(SENTINEL_VALUE)==true){
             System.out.println("Record creation cancelled.");
             return;
         }
+        
         int collectWeight = ValidateIntInput("Please enter the dog's weight: ");
         if(collectWeight==SENTINEL_VALUE){
             System.out.println("Record creation cancelled.");
             return;
         }
+        
         int collectAge = ValidateIntInput("Please enter the dog's age: ");
         if(collectAge==SENTINEL_VALUE){
             System.out.println("Record creation cancelled.");
                return;
         }
         //Record creation wasn't cancelled! Store and increment.
-        ids[positionInArray] = collectID;
-        names[positionInArray] = collectName;
-        breeds[positionInArray] = collectBreed;
-        weights[positionInArray] = collectWeight;
-        ages[positionInArray] = collectAge;
+        Dog toAdd= new Dog(collectID, collectName, collectWeight, collectAge);
+        dogs.add(toAdd);
         System.out.println("Record creation successful.");
-        }*/
-    }
-    
-    public static int FindNextAvailableIndex(){
-        /*for(int i=0;i<ids.length;i++){
-            if(ids[i]==0 && names[i].isEmpty()){
-                return i;
-            }
-        }*/
-        return -1; //all slots taken
     }
 
     public static String ValidateStringInput(String promptText){
         String output="";
         //Only need to validate that the input is not empty.
-        /*while(output.equals("")==true){
+        while(output.equals("")==true){
             System.out.println(promptText);
-            output = scn.nextLine();
-        }*/
+            output = SCN.nextLine();
+        }
         return output;
     }
     public static int ValidateIDInput(String promptText){
@@ -256,26 +303,7 @@ public class DogManagement {
         }
         return output;
     }
-    public static int PromptForOverride(){
-        boolean exit=false;
-        System.out.println("Do you want to override the existing record? (Y/N)");
-        int outSignal=-1;
-        /*while(exit==false){
-            String response = scn.nextLine();
-            if(response.equals("Y")==true){
-                exit=true;
-                outSignal=1;
-            }
-            else if(response.equals("N")==true){
-                exit=true;
-                outSignal=0;
-            }
-            else{
-                System.out.println("Invalid input. Please enter Y or N.");
-            }
-        }*/
-        return outSignal;
-    }
+    
     public static int FindIndexFromID(int id){
         for(int i=0;i<dogs.size();i++){
             if(dogs.get(i).getID()==id){
