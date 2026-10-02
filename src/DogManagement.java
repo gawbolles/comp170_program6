@@ -53,7 +53,7 @@ class Dog {
         return age;
     }
     public String toString(){
-        return "ID: " + id + ",\nName: " + name + ",\nWeight: " + weight + ",\nAge: " + age;
+        return "ID: " + id + "\nName: " + name + "\nWeight: " + weight + "\nAge: " + age;
     }
     /*public void displayInfo(){
         System.out.println("ID: " + id);
@@ -100,13 +100,21 @@ public class DogManagement {
         }
     }
     public static void importPriorData(){
-        File file = new File("doginfo.csv");
+        File file = new File("src/doginfo.csv");
         try {
             Scanner fileScanner = new Scanner(file);
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
                 String[] values = line.split(","); //this is what I found for splitting Strings by delim in java
-                int id = Integer.parseInt(values[0]);
+                int id = -1;
+                try{
+                    id = Integer.parseInt(values[0]);
+                }
+                catch(NumberFormatException e){
+                    //Skip if this line has an invalid ID format
+                    continue;
+                }
+                
                 String name = values[1];
                 int weight = Integer.parseInt(values[2]);
                 int age = Integer.parseInt(values[3]);
@@ -167,7 +175,14 @@ public class DogManagement {
                 System.out.println("Enter new values for the record:");
                 
                 String newName = ValidateStringInput("Enter the dog's new name: ");
-                if(newName.equals(SENTINEL_VALUE)==true){
+                int intName=0;
+                try{
+                    intName = Integer.parseInt(newName);    
+                }
+                catch(NumberFormatException e){
+                }
+                
+                if(intName==SENTINEL_VALUE){
                     System.out.println("Record update cancelled.");
                     return;
                 }
@@ -199,7 +214,13 @@ public class DogManagement {
         }
         
         String collectName = ValidateStringInput("Please enter the dog's name: ");
-        if(collectName.equals(SENTINEL_VALUE)==true){
+        int intName=0;
+        try{
+            intName = Integer.parseInt(collectName);    
+        }
+        catch(NumberFormatException e){
+        }
+        if(intName==SENTINEL_VALUE){
             System.out.println("Record creation cancelled.");
             return;
         }
